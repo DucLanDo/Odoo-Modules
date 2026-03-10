@@ -68,12 +68,30 @@ class AlphaTimesheetEntry(models.Model):
         help="Example: 16:30",
     )
 
+    time_from_display = fields.Char(
+        string="Time From",
+        compute="_compute_time_display",
+        store=False,
+    )
+
+    time_to_display = fields.Char(
+        string="Time To",
+        compute="_compute_time_display",
+        store=False,
+    )
+
     duration_minutes = fields.Integer(
         string="Minutes",
         compute="_compute_duration_minutes",
         store=True,
         readonly=True,
     )
+
+    @api.depends("time_from", "time_to")
+    def _compute_time_display(self):
+        for rec in self:
+            rec.time_from_display = rec._float_to_hhmm(rec.time_from)
+            rec.time_to_display = rec._float_to_hhmm(rec.time_to)
 
     @api.depends("time_from", "time_to")
     def _compute_duration_minutes(self):
@@ -88,3 +106,13 @@ class AlphaTimesheetEntry(models.Model):
         for rec in self:
             if rec.time_to < rec.time_from:
                 raise ValidationError("Time To must be later than Time From.")
+
+    def _float_to_hhmm(self, value):
+        if value is False:
+            return ""
+        hours = int(value)
+        minutes = int(round((value - hours) * 60))
+        if minutes == 60:
+            hours += 1
+            minutes = 0
+        return f"{hours:02d}:{minutes:02d}"

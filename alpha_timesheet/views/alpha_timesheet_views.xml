@@ -8,8 +8,8 @@
                 <field name="date"/>
                 <field name="partner_id"/>
                 <field name="employee_user_id"/>
-                <field name="time_from" widget="float_time"/>
-                <field name="time_to" widget="float_time"/>
+                <field name="time_from_display" string="Time From"/>
+                <field name="time_to_display" string="Time To"/>
                 <field name="duration_minutes"/>
                 <field name="name"/>
             </list>
