@@ -64,13 +64,42 @@
             <search string="Search Timesheets">
                 <field name="date"/>
                 <field name="partner_id"/>
+                <field name="employee_user_id"/>
 
                 <filter string="Today"
                         name="today"
                         domain="[('date', '=', context_today())]"/>
+
+                <separator/>
+
+                <filter string="Group by Date"
+                        name="group_by_date"
+                        context="{'group_by': 'date'}"/>
+
+                <filter string="Group by Customer"
+                        name="group_by_customer"
+                        context="{'group_by': 'partner_id'}"/>
+
+                <filter string="Group by Created By"
+                        name="group_by_user"
+                        context="{'group_by': 'employee_user_id'}"/>
+                <filter string="My Entries"
+                        name="my_entries"
+                        domain="[('employee_user_id', '=', uid)]"/>
             </search>
         </field>
     </record>
+
+    <!-- Window Action -->
+    <record id="action_alpha_timesheet_entry" model="ir.actions.act_window">
+        <field name="name">Timesheets</field>
+        <field name="res_model">alpha.timesheet.entry</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_alpha_timesheet_entry_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+    </record>
+
+    
 
     <!-- Window Action -->
     <record id="action_alpha_timesheet_entry" model="ir.actions.act_window">
