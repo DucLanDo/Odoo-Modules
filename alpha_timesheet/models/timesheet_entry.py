@@ -7,7 +7,7 @@ class AlphaTimesheetEntry(models.Model):
     _description = "Alpha Timesheet Entry"
     _order = "date desc, time_from desc"
 
-    name = fields.Char(string="Description", required=True)
+    name = fields.Text(string="Description", required=True)
 
     date = fields.Date(
         string="Date",
@@ -54,6 +54,18 @@ class AlphaTimesheetEntry(models.Model):
         required=True,
         default=lambda self: self.env.user,
         readonly=True,
+    )
+
+    status = fields.Selection(
+        [
+            ("todo", "To Do"),
+            ("in_progress", "In Progress"),
+            ("done", "Done"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="todo",
+        required=True,
     )
 
     time_from = fields.Float(
