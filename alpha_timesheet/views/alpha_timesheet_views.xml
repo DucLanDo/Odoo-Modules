@@ -1,0 +1,78 @@
+<odoo>
+    <!-- List View -->
+    <record id="view_alpha_timesheet_entry_list" model="ir.ui.view">
+        <field name="name">alpha.timesheet.entry.list</field>
+        <field name="model">alpha.timesheet.entry</field>
+        <field name="arch" type="xml">
+            <list string="Timesheet Entries">
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="employee_user_id"/>
+                <field name="time_from" widget="float_time"/>
+                <field name="time_to" widget="float_time"/>
+                <field name="duration_minutes"/>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_alpha_timesheet_entry_form" model="ir.ui.view">
+        <field name="name">alpha.timesheet.entry.form</field>
+        <field name="model">alpha.timesheet.entry</field>
+        <field name="arch" type="xml">
+            <form string="Timesheet Entry">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="partner_id"/>
+                            <field name="employee_user_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="time_from" widget="float_time"/>
+                            <field name="time_to" widget="float_time"/>
+                            <field name="duration_minutes" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Customer Details">
+                        <group>
+                            <field name="partner_street" readonly="1"/>
+                            <field name="partner_zip" readonly="1"/>
+                            <field name="partner_city" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="partner_email" readonly="1"/>
+                            <field name="partner_phone" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Description">
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_alpha_timesheet_entry_search" model="ir.ui.view">
+        <field name="name">alpha.timesheet.entry.search</field>
+        <field name="model">alpha.timesheet.entry</field>
+        <field name="arch" type="xml">
+            <search string="Search Timesheets">
+                <field name="date"/>
+                <field name="partner_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action -->
+    <record id="action_alpha_timesheet_entry" model="ir.actions.act_window">
+        <field name="name">Timesheets</field>
+        <field name="res_model">alpha.timesheet.entry</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_alpha_timesheet_entry_search"/>
+    </record>
+</odoo>
