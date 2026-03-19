@@ -4,8 +4,14 @@ from odoo.exceptions import ValidationError
 
 class AlphaTimesheetEntry(models.Model):
     _name = "alpha.timesheet.entry"
-    _description = "Alpha Timesheet Entry"
+    _description = "Task Planner Entry"
     _order = "date desc, time_from desc"
+
+    display_ticket_id = fields.Char(
+        string="Ticket ID",
+        compute="_compute_display_ticket_id",
+        store=False,
+    )
 
     name = fields.Text(string="Description", required=True)
 
@@ -130,6 +136,10 @@ class AlphaTimesheetEntry(models.Model):
         compute="_compute_total_chain_minutes",
         readonly=True,
     )
+
+    def _compute_display_ticket_id(self):
+        for rec in self:
+            rec.display_ticket_id = f"T-{rec.id}" if rec.id else ""
 
     @api.depends("name")
     def _compute_description_first_line(self):

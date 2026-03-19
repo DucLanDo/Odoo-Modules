@@ -1,6 +1,6 @@
 <odoo>
     <menuitem id="menu_alpha_timesheet_root"
-              name="Timesheets"
+              name="Task Planner"
               sequence="10"
               groups="base.group_user"/>
 

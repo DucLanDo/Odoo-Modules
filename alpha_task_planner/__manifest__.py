@@ -1,7 +1,7 @@
 {
-    "name": "Alpha Timesheet",
+    "name": "Task Planner",
     "version": "19.0.1.0.0",
-    "summary": "Simple custom timesheet for employees",
+    "summary": "Custom task planner for employees",
     "category": "Services",
     "author": "alphaIT",
     "license": "LGPL-3",
