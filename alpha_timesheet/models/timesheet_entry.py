@@ -114,14 +114,21 @@ class AlphaTimesheetEntry(models.Model):
     continued_entry_ids = fields.One2many(
         "alpha.timesheet.entry",
         "source_entry_id",
-        string="Continued Entries",
+        string="Direct Continued Entries",
+        readonly=True,
+    )
+
+    chain_entry_ids = fields.Many2many(
+        "alpha.timesheet.entry",
+        compute="_compute_chain_entry_ids",
+        string="All Related Entries",
         readonly=True,
     )
 
     total_chain_minutes = fields.Integer(
-        string="Total Minutes (All Linked Entries)",
+        string="Total Minutes (All Related Entries)",
         compute="_compute_total_chain_minutes",
-        store=False,
+        readonly=True,
     )
 
     @api.depends("name")
@@ -146,9 +153,30 @@ class AlphaTimesheetEntry(models.Model):
             else:
                 rec.duration_minutes = 0
 
+    @api.depends(
+        "source_entry_id",
+        "source_entry_id.source_entry_id",
+        "continued_entry_ids",
+        "continued_entry_ids.source_entry_id",
+        "continued_entry_ids.continued_entry_ids",
+    )
+    def _compute_chain_entry_ids(self):
+        for rec in self:
+            chain = rec._get_full_chain()
+            rec.chain_entry_ids = [(6, 0, chain.ids)]
+
+    @api.depends(
+        "duration_minutes",
+        "source_entry_id",
+        "source_entry_id.duration_minutes",
+        "continued_entry_ids",
+        "continued_entry_ids.duration_minutes",
+        "continued_entry_ids.continued_entry_ids",
+    )
     def _compute_total_chain_minutes(self):
         for rec in self:
-            rec.total_chain_minutes = rec._get_chain_total_minutes()
+            chain = rec._get_full_chain()
+            rec.total_chain_minutes = sum(chain.mapped("duration_minutes"))
 
     @api.constrains("time_from", "time_to")
     def _check_times(self):
@@ -166,12 +194,39 @@ class AlphaTimesheetEntry(models.Model):
             minutes = 0
         return f"{hours:02d}:{minutes:02d}"
 
-    def _get_chain_total_minutes(self):
+    def _get_root_entry(self):
         self.ensure_one()
-        total = self.duration_minutes or 0
-        for child in self.continued_entry_ids:
-            total += child._get_chain_total_minutes()
-        return total
+        current = self
+        while current.source_entry_id:
+            current = current.source_entry_id
+        return current
+
+    def _get_descendants_from_root(self, root):
+        self.ensure_one()
+        entries = self.env["alpha.timesheet.entry"]
+        stack = [root.id]
+        visited_ids = set()
+
+        while stack:
+            entry_id = stack.pop()
+            if entry_id in visited_ids:
+                continue
+
+            visited_ids.add(entry_id)
+            entry = self.env["alpha.timesheet.entry"].browse(entry_id)
+            entries |= entry
+
+            child_ids = entry.continued_entry_ids.ids
+            for child_id in child_ids:
+                if child_id not in visited_ids:
+                    stack.append(child_id)
+
+        return entries.sorted(key=lambda r: (r.date or fields.Date.today(), r.time_from or 0.0, r.id))
+
+    def _get_full_chain(self):
+        self.ensure_one()
+        root = self._get_root_entry()
+        return self._get_descendants_from_root(root)
 
     def action_open_continue_work_wizard(self):
         self.ensure_one()
@@ -188,30 +243,3 @@ class AlphaTimesheetEntry(models.Model):
                 "default_time_to": self.time_to or 0.0,
             },
         }
-    
-        chain_entry_ids = fields.Many2many(
-        "alpha.timesheet.entry",
-        compute="_compute_chain_entries",
-        string="All Related Entries"
-    )
-
-    def _compute_chain_entries(self):
-        for rec in self:
-            entries = self.env["alpha.timesheet.entry"]
-
-            # rückwärts (source)
-            current = rec
-            while current.source_entry_id:
-                entries |= current.source_entry_id
-                current = current.source_entry_id
-
-            # vorwärts (children)
-            def get_children(entry):
-                result = entry.continued_entry_ids
-                for child in entry.continued_entry_ids:
-                    result |= get_children(child)
-                return result
-
-            entries |= get_children(rec)
-
-            rec.chain_entry_ids = entries
