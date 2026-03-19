@@ -139,7 +139,7 @@ class AlphaTimesheetEntry(models.Model):
 
     def _compute_display_ticket_id(self):
         for rec in self:
-            rec.display_ticket_id = f"T-{rec.id}" if rec.id else ""
+            rec.display_ticket_id = str(rec.id) if rec.id else ""
 
     @api.depends("name")
     def _compute_description_first_line(self):
@@ -253,3 +253,4 @@ class AlphaTimesheetEntry(models.Model):
                 "default_time_to": self.time_to or 0.0,
             },
         }
+

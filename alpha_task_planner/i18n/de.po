@@ -1,0 +1,292 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* alpha_task_planner
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20260305\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-19 12:54+0000\n"
+"PO-Revision-Date: 2026-03-19 12:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__chain_entry_ids
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+msgid "All Related Entries"
+msgstr "Alle verknüpften Einträge"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_continue_wizard_form
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields.selection,name:alpha_task_planner.selection__alpha_timesheet_entry__status__cancelled
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "Cancelled"
+msgstr "Abgebrochen"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__partner_city
+msgid "City"
+msgstr "Stadt"
+
+#. module: alpha_task_planner
+#: model:ir.model,name:alpha_task_planner.model_alpha_timesheet_continue_wizard
+msgid "Continue Task Planner Work Wizard"
+msgstr "Weiterarbeiten-Assistent"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_continue_wizard_form
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+msgid "Continue Work"
+msgstr "Weiterarbeiten"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__source_entry_id
+msgid "Continued From"
+msgstr "Fortgeführt von"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_continue_wizard_form
+msgid "Create Continued Entry"
+msgstr "Fortgeführten Eintrag erstellen"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__employee_user_id
+msgid "Created By"
+msgstr "Erstellt von"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__create_uid
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__create_uid
+msgid "Created by"
+msgstr "Erstellt von"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__create_date
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__create_date
+msgid "Created on"
+msgstr "Erstellt am"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__partner_id
+msgid "Customer"
+msgstr "Kunde"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+msgid "Customer Details"
+msgstr "Kundendaten"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__date
+msgid "Date"
+msgstr "Datum"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__description_first_line
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__name
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_list
+msgid "Description"
+msgstr "Beschreibung"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__continued_entry_ids
+msgid "Direct Continued Entries"
+msgstr "Direkt fortgeführte Einträge"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__display_name
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__display_name
+msgid "Display Name"
+msgstr "Anzeigename"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields.selection,name:alpha_task_planner.selection__alpha_timesheet_entry__status__done
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "Done"
+msgstr "Erledigt"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__partner_email
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+msgid "Enter description..."
+msgstr "Beschreibung eingeben..."
+
+#. module: alpha_task_planner
+#: model:ir.ui.menu,name:alpha_task_planner.menu_alpha_timesheet_entries
+msgid "Entries"
+msgstr "Einträge"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,help:alpha_task_planner.field_alpha_timesheet_entry__time_from
+msgid "Example: 08:30"
+msgstr "Beispiel: 08:30"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,help:alpha_task_planner.field_alpha_timesheet_entry__time_to
+msgid "Example: 16:30"
+msgstr "Beispiel: 16:30"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "Group by Created By"
+msgstr "Nach Ersteller gruppieren"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "Group by Customer"
+msgstr "Nach Kunde gruppieren"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "Group by Date"
+msgstr "Nach Datum gruppieren"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "Group by Status"
+msgstr "Nach Status gruppieren"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__id
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__id
+msgid "ID"
+msgstr "ID"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields.selection,name:alpha_task_planner.selection__alpha_timesheet_entry__status__in_progress
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "In Progress"
+msgstr "In Bearbeitung"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__write_uid
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__write_uid
+msgid "Last Updated by"
+msgstr "Zuletzt aktualisiert von"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__write_date
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__write_date
+msgid "Last Updated on"
+msgstr "Zuletzt aktualisiert am"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__duration_minutes
+msgid "Minutes"
+msgstr "Minuten"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "My Entries"
+msgstr "Meine Einträge"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__date
+msgid "New Date"
+msgstr "Neues Datum"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__entry_id
+msgid "Original Entry"
+msgstr "Ursprünglicher Eintrag"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__partner_phone
+msgid "Phone"
+msgstr "Telefon"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "Search Timesheets"
+msgstr "Aufgabenplaner-Einträge suchen"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__status
+msgid "Status"
+msgstr "Status"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__partner_street
+msgid "Street"
+msgstr "Straße"
+
+#. module: alpha_task_planner
+#: model:ir.actions.act_window,name:alpha_task_planner.action_alpha_timesheet_entry
+#: model:ir.ui.menu,name:alpha_task_planner.menu_alpha_timesheet_root
+msgid "Task Planner"
+msgstr "Aufgabenplaner"
+
+#. module: alpha_task_planner
+#: model:ir.model,name:alpha_task_planner.model_alpha_timesheet_entry
+msgid "Task Planner Entry"
+msgstr "Aufgabenplaner-Eintrag"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__display_ticket_id
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_list
+msgid "Ticket ID"
+msgstr "Ticket-ID"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__time_from
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__time_from
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__time_from_display
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_list
+msgid "Time From"
+msgstr "Uhrzeit von"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_continue_wizard__time_to
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__time_to
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__time_to_display
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_list
+msgid "Time To"
+msgstr "Uhrzeit bis"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_list
+msgid "Timesheet Entries"
+msgstr "Aufgabenplaner-Einträge"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_form
+msgid "Timesheet Entry"
+msgstr "Aufgabenplaner-Eintrag"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields.selection,name:alpha_task_planner.selection__alpha_timesheet_entry__status__todo
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "To Do"
+msgstr "Offen"
+
+#. module: alpha_task_planner
+#: model_terms:ir.ui.view,arch_db:alpha_task_planner.view_alpha_timesheet_entry_search
+msgid "Today"
+msgstr "Heute"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__total_chain_minutes
+msgid "Total Minutes (All Related Entries)"
+msgstr "Gesamtminuten (alle verknüpften Einträge)"
+
+#. module: alpha_task_planner
+#: model:ir.model.fields,field_description:alpha_task_planner.field_alpha_timesheet_entry__partner_zip
+msgid "ZIP"
+msgstr "PLZ"
