@@ -9,6 +9,12 @@ class AlphaTimesheetEntry(models.Model):
 
     name = fields.Text(string="Description", required=True)
 
+    description_first_line = fields.Char(
+        string="Description",
+        compute="_compute_description_first_line",
+        store=True,
+    )
+
     date = fields.Date(
         string="Date",
         required=True,
@@ -99,6 +105,33 @@ class AlphaTimesheetEntry(models.Model):
         readonly=True,
     )
 
+    source_entry_id = fields.Many2one(
+        "alpha.timesheet.entry",
+        string="Continued From",
+        readonly=True,
+    )
+
+    continued_entry_ids = fields.One2many(
+        "alpha.timesheet.entry",
+        "source_entry_id",
+        string="Continued Entries",
+        readonly=True,
+    )
+
+    total_chain_minutes = fields.Integer(
+        string="Total Minutes (All Linked Entries)",
+        compute="_compute_total_chain_minutes",
+        store=False,
+    )
+
+    @api.depends("name")
+    def _compute_description_first_line(self):
+        for rec in self:
+            if rec.name:
+                rec.description_first_line = rec.name.splitlines()[0]
+            else:
+                rec.description_first_line = ""
+
     @api.depends("time_from", "time_to")
     def _compute_time_display(self):
         for rec in self:
@@ -112,6 +145,10 @@ class AlphaTimesheetEntry(models.Model):
                 rec.duration_minutes = int(round((rec.time_to - rec.time_from) * 60))
             else:
                 rec.duration_minutes = 0
+
+    def _compute_total_chain_minutes(self):
+        for rec in self:
+            rec.total_chain_minutes = rec._get_chain_total_minutes()
 
     @api.constrains("time_from", "time_to")
     def _check_times(self):
@@ -128,3 +165,53 @@ class AlphaTimesheetEntry(models.Model):
             hours += 1
             minutes = 0
         return f"{hours:02d}:{minutes:02d}"
+
+    def _get_chain_total_minutes(self):
+        self.ensure_one()
+        total = self.duration_minutes or 0
+        for child in self.continued_entry_ids:
+            total += child._get_chain_total_minutes()
+        return total
+
+    def action_open_continue_work_wizard(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Continue Work",
+            "res_model": "alpha.timesheet.continue.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_entry_id": self.id,
+                "default_date": fields.Date.context_today(self),
+                "default_time_from": self.time_to or 0.0,
+                "default_time_to": self.time_to or 0.0,
+            },
+        }
+    
+        chain_entry_ids = fields.Many2many(
+        "alpha.timesheet.entry",
+        compute="_compute_chain_entries",
+        string="All Related Entries"
+    )
+
+    def _compute_chain_entries(self):
+        for rec in self:
+            entries = self.env["alpha.timesheet.entry"]
+
+            # rückwärts (source)
+            current = rec
+            while current.source_entry_id:
+                entries |= current.source_entry_id
+                current = current.source_entry_id
+
+            # vorwärts (children)
+            def get_children(entry):
+                result = entry.continued_entry_ids
+                for child in entry.continued_entry_ids:
+                    result |= get_children(child)
+                return result
+
+            entries |= get_children(rec)
+
+            rec.chain_entry_ids = entries
