@@ -4,7 +4,7 @@ from odoo.exceptions import ValidationError
 
 class AlphaTimesheetContinueWizard(models.TransientModel):
     _name = "alpha.timesheet.continue.wizard"
-    _description = "Continue Timesheet Work Wizard"
+    _description = "Continue Task Planner Work Wizard"
 
     entry_id = fields.Many2one(
         "alpha.timesheet.entry",
@@ -52,7 +52,7 @@ class AlphaTimesheetContinueWizard(models.TransientModel):
 
         return {
             "type": "ir.actions.act_window",
-            "name": "Timesheet Entry",
+            "name": "Task Planner Entry",
             "res_model": "alpha.timesheet.entry",
             "res_id": new_entry.id,
             "view_mode": "form",

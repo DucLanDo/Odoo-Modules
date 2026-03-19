@@ -5,6 +5,7 @@
         <field name="model">alpha.timesheet.entry</field>
         <field name="arch" type="xml">
             <list string="Timesheet Entries">
+                <field name="display_ticket_id" string="Ticket ID"/>
                 <field name="date"/>
                 <field name="status"
                        widget="badge"
@@ -39,6 +40,7 @@
 
                     <group>
                         <group>
+                            <field name="display_ticket_id" readonly="1"/>
                             <field name="date"/>
                             <field name="partner_id"/>
                             <field name="employee_user_id" readonly="1"/>
@@ -77,6 +79,7 @@
                     <separator string="All Related Entries"/>
                     <field name="chain_entry_ids" readonly="1">
                         <list>
+                            <field name="display_ticket_id" string="Ticket ID"/>
                             <field name="date"/>
                             <field name="status"
                                    widget="badge"
