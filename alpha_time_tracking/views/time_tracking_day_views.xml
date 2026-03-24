@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- List View -->
     <record id="view_alpha_time_tracking_day_list" model="ir.ui.view">
         <field name="name">alpha.time.tracking.day.list</field>
         <field name="model">alpha.time.tracking.day</field>
@@ -15,7 +14,6 @@
         </field>
     </record>
 
-    <!-- Form View -->
     <record id="view_alpha_time_tracking_day_form" model="ir.ui.view">
         <field name="name">alpha.time.tracking.day.form</field>
         <field name="model">alpha.time.tracking.day</field>
@@ -55,35 +53,10 @@
         </field>
     </record>
 
-    <!-- Search View -->
-    <record id="view_alpha_time_tracking_day_search" model="ir.ui.view">
-        <field name="name">alpha.time.tracking.day.search</field>
-        <field name="model">alpha.time.tracking.day</field>
-        <field name="arch" type="xml">
-            <search string="Time Tracking Search">
-                <field name="date"/>
-                <field name="user_id"/>
-                <field name="employee_id"/>
-
-                <filter name="my_entries" string="My Entries" domain="[('user_id', '=', uid)]"/>
-                <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
-
-                <group expand="0" string="Group By">
-                    <filter name="group_by_user" string="User" context="{'group_by': 'user_id'}"/>
-                    <filter name="group_by_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
-                    <filter name="group_by_date" string="Date" context="{'group_by': 'date'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
-
-    <!-- Action -->
     <record id="action_alpha_time_tracking_day" model="ir.actions.act_window">
         <field name="name">Time Tracking</field>
         <field name="res_model">alpha.time.tracking.day</field>
         <field name="view_mode">list,form</field>
-        <field name="search_view_id" ref="view_alpha_time_tracking_day_search"/>
-        <field name="context">{'search_default_my_entries': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first time tracking entry
