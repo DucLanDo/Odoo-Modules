@@ -57,9 +57,6 @@ class AlphaTimeTrackingDay(models.Model):
         )
     ]
 
-    # ----------------------------
-    # COMPUTE
-    # ----------------------------
     @api.depends("user_id")
     def _compute_employee_id(self):
         for record in self:
@@ -75,13 +72,9 @@ class AlphaTimeTrackingDay(models.Model):
             total_minutes = sum(record.line_ids.mapped("duration_minutes"))
             hours = total_minutes // 60
             minutes = total_minutes % 60
-
             record.total_minutes = total_minutes
             record.total_time_display = f"{hours:02d}:{minutes:02d}"
 
-    # ----------------------------
-    # DISPLAY NAME
-    # ----------------------------
     def name_get(self):
         result = []
         for record in self:
@@ -89,3 +82,13 @@ class AlphaTimeTrackingDay(models.Model):
             label = f"{user_name} - {record.date}" if record.date else user_name
             result.append((record.id, label))
         return result
+
+    def unlink(self):
+        if self.env.context.get("from_attendance_sync"):
+            return super().unlink()
+
+        attendances = self.mapped("line_ids.attendance_id")
+        res = super().unlink()
+        if attendances:
+            attendances.with_context(from_time_tracking_sync=True).unlink()
+        return res

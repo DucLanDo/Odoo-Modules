@@ -1,7 +1,8 @@
-from odoo import api, fields, models
-from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class AlphaTimeTrackingLine(models.Model):
@@ -76,6 +77,10 @@ class AlphaTimeTrackingLine(models.Model):
         hours = int(float_value)
         minutes = int(round((float_value - hours) * 60))
 
+        if minutes == 60:
+            hours += 1
+            minutes = 0
+
         local_naive = datetime.combine(date_value, datetime.min.time()) + timedelta(
             hours=hours,
             minutes=minutes,
@@ -104,18 +109,33 @@ class AlphaTimeTrackingLine(models.Model):
             }
 
             if record.attendance_id:
-                record.attendance_id.write(vals)
+                record.attendance_id.with_context(from_time_tracking_sync=True).write(vals)
             else:
-                attendance = self.env["hr.attendance"].create(vals)
+                attendance = self.env["hr.attendance"].with_context(
+                    from_time_tracking_sync=True
+                ).create(vals)
                 record.attendance_id = attendance.id
+                attendance.time_tracking_line_id = record.id
 
     @api.model
     def create(self, vals):
         record = super().create(vals)
-        record._create_or_update_attendance()
+        if not self.env.context.get("from_attendance_sync"):
+            record._create_or_update_attendance()
         return record
 
     def write(self, vals):
         res = super().write(vals)
-        self._create_or_update_attendance()
+        if not self.env.context.get("from_attendance_sync"):
+            self._create_or_update_attendance()
+        return res
+
+    def unlink(self):
+        if self.env.context.get("from_attendance_sync"):
+            return super().unlink()
+
+        attendances = self.mapped("attendance_id")
+        res = super().unlink()
+        if attendances:
+            attendances.with_context(from_time_tracking_sync=True).unlink()
         return res
