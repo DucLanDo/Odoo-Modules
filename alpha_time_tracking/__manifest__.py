@@ -24,6 +24,8 @@ Custom Time Tracking module
         "security/ir.model.access.csv",
         "views/time_tracking_day_views.xml",
         "views/time_tracking_dashboard_action.xml",
+        "views/resource_calendar_leaves_views.xml",
+        "views/time_tracking_timeoff_views.xml",
         "views/time_tracking_menus.xml",
     ],
     "assets": {

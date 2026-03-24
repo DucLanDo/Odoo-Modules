@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_alpha_resource_calendar_leaves_list" model="ir.ui.view">
+        <field name="name">alpha.resource.calendar.leaves.list</field>
+        <field name="model">resource.calendar.leaves</field>
+        <field name="arch" type="xml">
+            <list string="Time Off" create="0" edit="0" delete="0">
+                <field name="time_off_type_display" string="Type"/>
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="resource_id"/>
+            </list>
+        </field>
+    </record>
+</odoo>

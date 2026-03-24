@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_alpha_time_tracking_public_holidays" model="ir.actions.act_window">
+        <field name="name">Time Off</field>
+        <field name="res_model">resource.calendar.leaves</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="alpha_time_tracking.view_alpha_resource_calendar_leaves_list"/>
+        <field name="domain">[]</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
+    </record>
+</odoo>

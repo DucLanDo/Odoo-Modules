@@ -14,4 +14,12 @@
         action="action_alpha_time_tracking_day"
         sequence="20"
     />
+
+    <menuitem
+        id="menu_alpha_time_tracking_public_holidays"
+        name="Time Off"
+        parent="menu_alpha_time_tracking_root"
+        action="action_alpha_time_tracking_public_holidays"
+        sequence="30"
+    />
 </odoo>
