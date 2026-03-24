@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="alpha_time_tracking.TimeTrackingDashboard">
+        <div class="o_alpha_time_tracking_dashboard">
+            <div class="o_alpha_tt_card">
+                <div class="o_alpha_tt_header">
+                    <h1 t-esc="state.todayLabel"/>
+                </div>
+
+                <t t-if="state.loading">
+                    <div class="o_alpha_tt_empty">Loading...</div>
+                </t>
+
+                <t t-elif="state.lines.length">
+                    <div class="o_alpha_tt_lines">
+                        <t t-foreach="state.lines" t-as="line" t-key="line.id">
+                            <div class="o_alpha_tt_line_row">
+                                <div class="o_alpha_tt_time_from" t-esc="line.timeFrom"/>
+                                <div class="o_alpha_tt_duration" t-esc="line.duration"/>
+                                <div class="o_alpha_tt_time_to" t-esc="line.timeTo"/>
+                            </div>
+                        </t>
+                    </div>
+
+                    <t t-if="state.activityDescription">
+                        <div class="o_alpha_tt_activities_block">
+                            <div class="o_alpha_tt_activities_label">Activities</div>
+                            <div class="o_alpha_tt_activities_text" t-esc="state.activityDescription"/>
+                        </div>
+                    </t>
+                </t>
+
+                <t t-else="">
+                    <div class="o_alpha_tt_empty">
+                        No working times have been entered for today yet.
+                    </div>
+                </t>
+
+                <div class="o_alpha_tt_actions">
+                    <button type="button" class="btn btn-primary" t-on-click="onClickLogWorkingTime">
+                        Log Working Time
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

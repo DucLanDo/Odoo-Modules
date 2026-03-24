@@ -3,6 +3,7 @@
     <menuitem
         id="menu_alpha_time_tracking_root"
         name="Time Tracking"
+        action="action_alpha_time_tracking_dashboard"
         sequence="10"
     />
 
@@ -11,6 +12,6 @@
         name="Entries"
         parent="menu_alpha_time_tracking_root"
         action="action_alpha_time_tracking_day"
-        sequence="10"
+        sequence="20"
     />
 </odoo>

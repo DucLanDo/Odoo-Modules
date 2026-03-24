@@ -16,12 +16,21 @@ Custom Time Tracking module
         "base",
         "hr",
         "hr_attendance",
+        "web",
     ],
     "data": [
         "security/ir.model.access.csv",
         "views/time_tracking_day_views.xml",
+        "views/time_tracking_dashboard_action.xml",
         "views/time_tracking_menus.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "alpha_time_tracking/static/src/js/time_tracking_dashboard.js",
+            "alpha_time_tracking/static/src/xml/time_tracking_dashboard.xml",
+            "alpha_time_tracking/static/src/scss/time_tracking_dashboard.scss",
+        ],
+    },
     "installable": True,
     "application": True,
 }
