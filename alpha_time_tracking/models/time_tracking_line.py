@@ -17,6 +17,15 @@ class AlphaTimeTrackingLine(models.Model):
         ondelete="cascade",
     )
 
+    project_id = fields.Many2one(
+        "project.project",
+        string="Project",
+    )
+
+    activity_description = fields.Text(
+        string="Activity Description",
+    )
+
     time_from = fields.Float(
         string="From",
         required=True,
@@ -29,7 +38,13 @@ class AlphaTimeTrackingLine(models.Model):
 
     duration_minutes = fields.Integer(
         string="Duration (Minutes)",
-        compute="_compute_duration_minutes",
+        compute="_compute_duration_fields",
+        store=True,
+    )
+
+    duration_display = fields.Char(
+        string="Duration",
+        compute="_compute_duration_fields",
         store=True,
     )
 
@@ -41,16 +56,22 @@ class AlphaTimeTrackingLine(models.Model):
     )
 
     @api.depends("time_from", "time_to")
-    def _compute_duration_minutes(self):
+    def _compute_duration_fields(self):
         for record in self:
             if (
                 record.time_from is not False
                 and record.time_to is not False
                 and record.time_to > record.time_from
             ):
-                record.duration_minutes = round((record.time_to - record.time_from) * 60)
+                total_minutes = round((record.time_to - record.time_from) * 60)
+                hours = total_minutes // 60
+                minutes = total_minutes % 60
+
+                record.duration_minutes = total_minutes
+                record.duration_display = f"{hours}h {minutes}m"
             else:
                 record.duration_minutes = 0
+                record.duration_display = "0h 0m"
 
     @api.constrains("time_from", "time_to")
     def _check_time_range(self):

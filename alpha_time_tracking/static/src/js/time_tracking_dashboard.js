@@ -10,37 +10,52 @@ class TimeTrackingDashboard extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
-        this.notification = useService("notification");
+
+        const today = this.getTodayDateString();
 
         this.state = useState({
             loading: true,
-            todayLabel: "",
+            selectedDate: today,
+            selectedDateLabel: "",
             lines: [],
             dayId: false,
-            activityDescription: "",
         });
 
         onWillStart(async () => {
-            await this.loadTodayData();
+            await this.loadSelectedDateData();
         });
     }
 
     getTodayDateString() {
         const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
+        return this.formatDateToYMD(now);
+    }
+
+    formatDateToYMD(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
     }
 
+    parseYMDToDate(dateStr) {
+        return new Date(`${dateStr}T00:00:00`);
+    }
+
     formatHeaderDate(dateStr) {
-        const date = new Date(`${dateStr}T00:00:00`);
+        const date = this.parseYMDToDate(dateStr);
         return new Intl.DateTimeFormat("en-GB", {
             weekday: "long",
             day: "2-digit",
             month: "long",
             year: "numeric",
         }).format(date);
+    }
+
+    shiftSelectedDate(days) {
+        const date = this.parseYMDToDate(this.state.selectedDate);
+        date.setDate(date.getDate() + days);
+        this.state.selectedDate = this.formatDateToYMD(date);
     }
 
     formatFloatTime(value) {
@@ -65,34 +80,30 @@ class TimeTrackingDashboard extends Component {
         return `${hours}h ${minutes}m`;
     }
 
-    async loadTodayData() {
+    async loadSelectedDateData() {
         this.state.loading = true;
-
-        const today = this.getTodayDateString();
-        this.state.todayLabel = this.formatHeaderDate(today);
+        this.state.selectedDateLabel = this.formatHeaderDate(this.state.selectedDate);
 
         const days = await this.orm.searchRead(
             "alpha.time.tracking.day",
-            [["date", "=", today]],
-            ["id", "activity_description", "line_ids"]
+            [["date", "=", this.state.selectedDate]],
+            ["id", "line_ids"]
         );
 
         if (!days.length) {
             this.state.dayId = false;
             this.state.lines = [];
-            this.state.activityDescription = "";
             this.state.loading = false;
             return;
         }
 
         const day = days[0];
         this.state.dayId = day.id;
-        this.state.activityDescription = day.activity_description || "";
 
         const lines = await this.orm.searchRead(
             "alpha.time.tracking.line",
             [["day_id", "=", day.id]],
-            ["id", "time_from", "time_to", "duration_minutes"]
+            ["id", "time_from", "time_to", "duration_minutes", "project_id", "activity_description"]
         );
 
         this.state.lines = lines.map((line) => ({
@@ -100,35 +111,54 @@ class TimeTrackingDashboard extends Component {
             timeFrom: this.formatFloatTime(line.time_from),
             duration: this.formatDurationMinutes(line.duration_minutes || 0),
             timeTo: this.formatFloatTime(line.time_to),
+            projectName: line.project_id ? line.project_id[1] : "",
+            activityDescription: line.activity_description || "",
         }));
 
         this.state.loading = false;
     }
 
-    async onClickLogWorkingTime() {
-        if (this.state.dayId) {
-            await this.action.doAction({
-                type: "ir.actions.act_window",
-                name: "Edit Working Time",
-                res_model: "alpha.time.tracking.day",
-                res_id: this.state.dayId,
-                views: [[false, "form"]],
-                target: "new",
-            });
-        } else {
-            await this.action.doAction({
-                type: "ir.actions.act_window",
-                name: "Log Working Time",
-                res_model: "alpha.time.tracking.day",
-                views: [[false, "form"]],
-                target: "new",
-                context: {
-                    default_date: this.getTodayDateString(),
-                },
-            });
-        }
+    async onDateChange(ev) {
+        this.state.selectedDate = ev.target.value;
+        await this.loadSelectedDateData();
+    }
 
-        await this.loadTodayData();
+    async onPreviousDay() {
+        this.shiftSelectedDate(-1);
+        await this.loadSelectedDateData();
+    }
+
+    async onNextDay() {
+        this.shiftSelectedDate(1);
+        await this.loadSelectedDateData();
+    }
+
+    async onClickEditWorkingTime() {
+        const action = this.state.dayId
+            ? {
+                  type: "ir.actions.act_window",
+                  name: "Edit Working Time",
+                  res_model: "alpha.time.tracking.day",
+                  res_id: this.state.dayId,
+                  views: [[false, "form"]],
+                  target: "new",
+              }
+            : {
+                  type: "ir.actions.act_window",
+                  name: "Edit Working Time",
+                  res_model: "alpha.time.tracking.day",
+                  views: [[false, "form"]],
+                  target: "new",
+                  context: {
+                      default_date: this.state.selectedDate,
+                  },
+              };
+
+        await this.action.doAction(action, {
+            onClose: async () => {
+                await this.loadSelectedDateData();
+            },
+        });
     }
 }
 

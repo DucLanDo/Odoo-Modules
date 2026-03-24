@@ -16,6 +16,7 @@ Custom Time Tracking module
         "base",
         "hr",
         "hr_attendance",
+        "project",
         "web",
     ],
     "data": [

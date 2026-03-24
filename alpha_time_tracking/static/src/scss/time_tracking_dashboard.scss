@@ -2,7 +2,7 @@
     padding: 24px;
 
     .o_alpha_tt_card {
-        max-width: 820px;
+        max-width: 900px;
         margin: 0 auto;
         background: #ffffff;
         border-radius: 16px;
@@ -12,19 +12,54 @@
 
     .o_alpha_tt_header {
         margin-bottom: 24px;
+    }
+
+    .o_alpha_tt_nav {
+        display: grid;
+        grid-template-columns: 56px 1fr 56px;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .o_alpha_tt_nav_btn {
+        height: 44px;
+        font-size: 1.6rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .o_alpha_tt_nav_center {
+        text-align: center;
 
         h1 {
-            margin: 0;
+            margin: 0 0 10px 0;
             font-size: 2rem;
             font-weight: 700;
+        }
+    }
+
+    .o_alpha_tt_date_picker {
+        display: flex;
+        justify-content: center;
+
+        input {
+            min-width: 180px;
         }
     }
 
     .o_alpha_tt_lines {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
         margin-bottom: 20px;
+    }
+
+    .o_alpha_tt_line_card {
+        padding: 16px;
+        border-radius: 12px;
+        background: #f6f7f9;
     }
 
     .o_alpha_tt_line_row {
@@ -32,10 +67,8 @@
         grid-template-columns: 120px 1fr 120px;
         align-items: center;
         gap: 16px;
-        padding: 14px 16px;
-        border-radius: 12px;
-        background: #f6f7f9;
         font-size: 1.05rem;
+        margin-bottom: 12px;
     }
 
     .o_alpha_tt_time_from,
@@ -49,32 +82,31 @@
         font-weight: 500;
     }
 
-    .o_alpha_tt_activities_block {
-        margin-bottom: 20px;
-        padding: 16px;
-        background: #fafafa;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-    }
-
-    .o_alpha_tt_activities_label {
-        font-size: 0.9rem;
+    .o_alpha_tt_meta_label {
+        font-size: 0.85rem;
         font-weight: 700;
-        margin-bottom: 6px;
         color: #374151;
+        margin-top: 8px;
+        margin-bottom: 4px;
     }
 
-    .o_alpha_tt_activities_text {
+    .o_alpha_tt_meta_text {
         color: #4b5563;
+    }
+
+    .o_alpha_tt_multiline {
         white-space: pre-wrap;
     }
 
     .o_alpha_tt_empty {
         padding: 24px 0;
         color: #6b7280;
+        text-align: center;
     }
 
     .o_alpha_tt_actions {
-        margin-top: 12px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
     }
 }
