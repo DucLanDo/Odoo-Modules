@@ -11,13 +11,41 @@
 
                         <div class="o_alpha_tt_nav_center">
                             <h1 t-esc="state.selectedDateLabel"/>
-                            <div class="o_alpha_tt_date_picker">
-                                <input type="date" t-model="state.selectedDate" t-on-change="onDateChange"/>
-                            </div>
+                            <div class="o_alpha_tt_month_label" t-esc="state.selectedMonthLabel"/>
                         </div>
 
                         <button type="button" class="btn btn-outline-secondary o_alpha_tt_nav_btn" t-on-click="onNextDay">
                             ›
+                        </button>
+                    </div>
+
+                    <div class="o_alpha_tt_day_strip_wrapper" t-ref="dayStripWrapper">
+                        <div class="o_alpha_tt_day_strip">
+                            <t t-foreach="state.dayStrip" t-as="day" t-key="day.date">
+                                <button
+                                    type="button"
+                                    t-att-class="getDayBoxClass(day)"
+                                    t-on-click="() => this.onSelectDay(day.date)"
+                                >
+                                    <div class="o_alpha_tt_day_top">
+                                        <span class="o_alpha_tt_day_number" t-esc="day.dayNumber"/>
+                                        <span class="o_alpha_tt_day_weekday" t-esc="day.weekdayShort"/>
+                                    </div>
+                                    <div class="o_alpha_tt_day_total" t-esc="day.totalDisplay"/>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="o_alpha_tt_date_controls">
+                        <input type="date" t-model="state.selectedDate" t-on-change="onDateChange"/>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-primary o_alpha_tt_today_btn"
+                            t-on-click="onToday"
+                        >
+                            Today
                         </button>
                     </div>
                 </div>

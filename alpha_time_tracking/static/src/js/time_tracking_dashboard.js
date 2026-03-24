@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onWillStart, useState } from "@odoo/owl";
+import { Component, onWillStart, onMounted, useRef, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
@@ -10,19 +10,29 @@ class TimeTrackingDashboard extends Component {
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
+        this.dayStripWrapperRef = useRef("dayStripWrapper");
 
         const today = this.getTodayDateString();
 
         this.state = useState({
             loading: true,
             selectedDate: today,
+            todayDate: today,
             selectedDateLabel: "",
+            selectedMonthLabel: "",
             lines: [],
             dayId: false,
+            dayStrip: [],
         });
 
         onWillStart(async () => {
+            this.buildDayStrip();
             await this.loadSelectedDateData();
+        });
+
+        onMounted(() => {
+            this.centerDayStripScroll();
+            this.bindWheelScroll();
         });
     }
 
@@ -49,6 +59,21 @@ class TimeTrackingDashboard extends Component {
             day: "2-digit",
             month: "long",
             year: "numeric",
+        }).format(date);
+    }
+
+    formatMonthLabel(dateStr) {
+        const date = this.parseYMDToDate(dateStr);
+        return new Intl.DateTimeFormat("en-GB", {
+            month: "long",
+            year: "numeric",
+        }).format(date);
+    }
+
+    formatWeekdayShort(dateStr) {
+        const date = this.parseYMDToDate(dateStr);
+        return new Intl.DateTimeFormat("en-GB", {
+            weekday: "short",
         }).format(date);
     }
 
@@ -80,9 +105,130 @@ class TimeTrackingDashboard extends Component {
         return `${hours}h ${minutes}m`;
     }
 
+    formatDurationCompact(totalMinutes) {
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        return `${hours}:${String(minutes).padStart(2, "0")}`;
+    }
+
+    isEndOfWeek(dateStr) {
+        const date = this.parseYMDToDate(dateStr);
+        const day = date.getDay(); // 0 = Sunday
+        return day === 0;
+    }
+
+    buildDayStrip() {
+        const centerDate = this.parseYMDToDate(this.state.selectedDate);
+        const days = [];
+
+        for (let i = -30; i <= 30; i++) {
+            const current = new Date(centerDate);
+            current.setDate(centerDate.getDate() + i);
+
+            const ymd = this.formatDateToYMD(current);
+            days.push({
+                date: ymd,
+                dayNumber: current.getDate(),
+                weekdayShort: this.formatWeekdayShort(ymd),
+                totalMinutes: 0,
+                totalDisplay: "",
+                isSelected: ymd === this.state.selectedDate,
+                isToday: ymd === this.state.todayDate,
+                hasEntries: false,
+                isWeekSeparator: this.isEndOfWeek(ymd),
+            });
+        }
+
+        this.state.dayStrip = days;
+    }
+
+    async loadDayStripTotals() {
+        const dates = this.state.dayStrip.map((d) => d.date);
+        if (!dates.length) {
+            return;
+        }
+
+        const dayRecords = await this.orm.searchRead(
+            "alpha.time.tracking.day",
+            [["date", "in", dates]],
+            ["id", "date", "total_minutes"]
+        );
+
+        const totalsByDate = {};
+        for (const day of dayRecords) {
+            totalsByDate[day.date] = day.total_minutes || 0;
+        }
+
+        this.state.dayStrip = this.state.dayStrip.map((day) => {
+            const totalMinutes = totalsByDate[day.date] || 0;
+            const hasEntries = totalMinutes > 0;
+
+            return {
+                ...day,
+                totalMinutes,
+                totalDisplay: hasEntries ? this.formatDurationCompact(totalMinutes) : "",
+                hasEntries,
+                isSelected: day.date === this.state.selectedDate,
+                isToday: day.date === this.state.todayDate,
+            };
+        });
+    }
+
+    getDayBoxClass(day) {
+        let classes = "o_alpha_tt_day_box";
+
+        if (day.isSelected) {
+            classes += " o_selected";
+        } else if (day.hasEntries) {
+            classes += " o_has_entries";
+        } else if (day.isToday) {
+            classes += " o_today";
+        }
+
+        if (day.isWeekSeparator) {
+            classes += " o_week_separator";
+        }
+
+        return classes;
+    }
+
+    centerDayStripScroll() {
+        const el = this.dayStripWrapperRef.el;
+        if (!el) {
+            return;
+        }
+
+        const centered = Math.max(0, (el.scrollWidth - el.clientWidth) / 2);
+        el.scrollLeft = centered;
+    }
+
+    bindWheelScroll() {
+        const el = this.dayStripWrapperRef.el;
+        if (!el || el.__alphaWheelBound) {
+            return;
+        }
+
+        el.addEventListener(
+            "wheel",
+            (ev) => {
+                if (Math.abs(ev.deltaY) > Math.abs(ev.deltaX)) {
+                    ev.preventDefault();
+                    el.scrollLeft += ev.deltaY;
+                }
+            },
+            { passive: false }
+        );
+
+        el.__alphaWheelBound = true;
+    }
+
     async loadSelectedDateData() {
         this.state.loading = true;
         this.state.selectedDateLabel = this.formatHeaderDate(this.state.selectedDate);
+        this.state.selectedMonthLabel = this.formatMonthLabel(this.state.selectedDate);
+
+        this.buildDayStrip();
+        await this.loadDayStripTotals();
 
         const days = await this.orm.searchRead(
             "alpha.time.tracking.day",
@@ -94,6 +240,7 @@ class TimeTrackingDashboard extends Component {
             this.state.dayId = false;
             this.state.lines = [];
             this.state.loading = false;
+            this.centerDayStripScroll();
             return;
         }
 
@@ -116,6 +263,7 @@ class TimeTrackingDashboard extends Component {
         }));
 
         this.state.loading = false;
+        this.centerDayStripScroll();
     }
 
     async onDateChange(ev) {
@@ -130,6 +278,16 @@ class TimeTrackingDashboard extends Component {
 
     async onNextDay() {
         this.shiftSelectedDate(1);
+        await this.loadSelectedDateData();
+    }
+
+    async onToday() {
+        this.state.selectedDate = this.state.todayDate;
+        await this.loadSelectedDateData();
+    }
+
+    async onSelectDay(dayDate) {
+        this.state.selectedDate = dayDate;
         await this.loadSelectedDateData();
     }
 
