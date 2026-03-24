@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_alpha_time_tracking_day_list" model="ir.ui.view">
+        <field name="name">alpha.time.tracking.day.list</field>
+        <field name="model">alpha.time.tracking.day</field>
+        <field name="arch" type="xml">
+            <list string="Time Tracking">
+                <field name="date"/>
+                <field name="user_id"/>
+                <field name="employee_id"/>
+                <field name="total_time_display" string="Total Time"/>
+                <field name="activity_description"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_alpha_time_tracking_day_form" model="ir.ui.view">
+        <field name="name">alpha.time.tracking.day.form</field>
+        <field name="model">alpha.time.tracking.day</field>
+        <field name="arch" type="xml">
+            <form string="Time Tracking">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="user_id"/>
+                            <field name="employee_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="total_time_display" readonly="1"/>
+                            <field name="total_minutes" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Working Times">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="time_from" widget="float_time"/>
+                                    <field name="time_to" widget="float_time"/>
+                                    <field name="duration_minutes" readonly="1"/>
+                                    <field name="attendance_id" readonly="1"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Activities">
+                            <field name="activity_description" placeholder="Describe the activities for this day..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_alpha_time_tracking_day_search" model="ir.ui.view">
+        <field name="name">alpha.time.tracking.day.search</field>
+        <field name="model">alpha.time.tracking.day</field>
+        <field name="arch" type="xml">
+            <search string="Time Tracking Search">
+                <field name="date"/>
+                <field name="user_id"/>
+                <field name="employee_id"/>
+
+                <filter name="my_entries" string="My Entries" domain="[('user_id', '=', uid)]"/>
+                <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+
+                <group expand="0" string="Group By">
+                    <filter name="group_by_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_by_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_date" string="Date" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_alpha_time_tracking_day" model="ir.actions.act_window">
+        <field name="name">Time Tracking</field>
+        <field name="res_model">alpha.time.tracking.day</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_alpha_time_tracking_day_search"/>
+        <field name="context">{'search_default_my_entries': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first time tracking entry
+            </p>
+        </field>
+    </record>
+</odoo>

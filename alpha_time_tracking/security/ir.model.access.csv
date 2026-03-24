@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_alpha_time_tracking_day_user,alpha.time.tracking.day user,model_alpha_time_tracking_day,base.group_user,1,1,1,1
+access_alpha_time_tracking_line_user,alpha.time.tracking.line user,model_alpha_time_tracking_line,base.group_user,1,1,1,1

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem
+        id="menu_alpha_time_tracking_root"
+        name="Time Tracking"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_alpha_time_tracking_entries"
+        name="Entries"
+        parent="menu_alpha_time_tracking_root"
+        action="action_alpha_time_tracking_day"
+        sequence="10"
+    />
+</odoo>
