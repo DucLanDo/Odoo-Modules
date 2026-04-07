@@ -5,7 +5,12 @@
         <field name="res_model">resource.calendar.leaves</field>
         <field name="view_mode">list,form</field>
         <field name="view_id" ref="alpha_time_tracking.view_alpha_resource_calendar_leaves_list"/>
-        <field name="domain">[]</field>
+        <field name="domain">
+            ['|',
+                ('holiday_id.employee_id.user_id', '=', uid),
+                ('holiday_id', '=', False)
+            ]
+        </field>
         <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
     </record>
 </odoo>

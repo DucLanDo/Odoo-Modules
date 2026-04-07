@@ -27,6 +27,7 @@ Custom Time Tracking module
         "views/resource_calendar_leaves_views.xml",
         "views/time_tracking_timeoff_views.xml",
         "views/time_tracking_menus.xml",
+        "security/resource_calendar_leaves_rules.xml",
     ],
     "assets": {
         "web.assets_backend": [
