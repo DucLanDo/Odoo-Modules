@@ -3,6 +3,7 @@
 import { Component, onWillStart, onMounted, useRef, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { session } from "@web/session";
 
 class TimeTrackingDashboard extends Component {
     static template = "alpha_time_tracking.TimeTrackingDashboard";
@@ -135,6 +136,12 @@ class TimeTrackingDashboard extends Component {
                 isSelected: ymd === this.state.selectedDate,
                 isToday: ymd === this.state.todayDate,
                 hasEntries: false,
+                hasLeave: false,
+                leaveType: "",
+                leaveColor: "",
+                leaveIconClass: "",
+                isPublicHoliday: false,
+                hoverLabel: "",
                 isWeekSeparator: this.isEndOfWeek(ymd),
             });
         }
@@ -142,11 +149,54 @@ class TimeTrackingDashboard extends Component {
         this.state.dayStrip = days;
     }
 
+    parseOdooUTCToLocalDate(datetimeStr, subtractOneSecond = false) {
+        if (!datetimeStr) {
+            return null;
+        }
+
+        const normalized = datetimeStr.replace("T", " ");
+        const [datePart, timePart = "00:00:00"] = normalized.split(" ");
+        const [year, month, day] = datePart.split("-").map(Number);
+        const [hour, minute, second] = timePart.split(":").map(Number);
+
+        let utcDate = new Date(Date.UTC(year, month - 1, day, hour, minute, second || 0));
+
+        if (subtractOneSecond) {
+            utcDate = new Date(utcDate.getTime() - 1000);
+        }
+
+        return this.formatDateToYMD(utcDate);
+    }
+
+    enumerateOdooDateRange(dateFromStr, dateToStr) {
+        const startDateStr = this.parseOdooUTCToLocalDate(dateFromStr, false);
+        const endDateStr = this.parseOdooUTCToLocalDate(dateToStr, true);
+
+        if (!startDateStr || !endDateStr) {
+            return [];
+        }
+
+        const start = this.parseYMDToDate(startDateStr);
+        const end = this.parseYMDToDate(endDateStr);
+        const result = [];
+
+        const current = new Date(start);
+        while (current <= end) {
+            result.push(this.formatDateToYMD(current));
+            current.setDate(current.getDate() + 1);
+        }
+
+        return result;
+    }
+
     async loadDayStripTotals() {
         const dates = this.state.dayStrip.map((d) => d.date);
         if (!dates.length) {
             return;
         }
+
+        const firstDate = dates[0];
+        const lastDate = dates[dates.length - 1];
 
         const dayRecords = await this.orm.searchRead(
             "alpha.time.tracking.day",
@@ -159,15 +209,111 @@ class TimeTrackingDashboard extends Component {
             totalsByDate[day.date] = day.total_minutes || 0;
         }
 
-        this.state.dayStrip = this.state.dayStrip.map((day) => {
+        // IMPORTANT:
+        // We load all visible resource.calendar.leaves in the date range.
+        // Access rights / record rules should already ensure the user only sees:
+        // - own time offs
+        // - public holidays
+        const calendarLeaves = await this.orm.searchRead(
+            "resource.calendar.leaves",
+            [
+                ["date_from", "<=", `${lastDate} 23:59:59`],
+                ["date_to", ">=", `${firstDate} 00:00:00`],
+            ],
+            ["id", "name", "date_from", "date_to", "holiday_id", "time_off_type_display"]
+        );
+
+        const dateStateMap = {};
+
+        for (const day of this.state.dayStrip) {
             const totalMinutes = totalsByDate[day.date] || 0;
             const hasEntries = totalMinutes > 0;
 
-            return {
-                ...day,
+            dateStateMap[day.date] = {
                 totalMinutes,
                 totalDisplay: hasEntries ? this.formatDurationCompact(totalMinutes) : "",
                 hasEntries,
+                hasLeave: false,
+                leaveType: "",
+                leaveColor: "",
+                leaveIconClass: "",
+                isPublicHoliday: false,
+                hoverLabel: "",
+            };
+        }
+
+        const enumerateOdooDateRange = (dateFromStr, dateToStr) => {
+            const startDateStr = this.parseOdooUTCToLocalDate(dateFromStr, false);
+            const endDateStr = this.parseOdooUTCToLocalDate(dateToStr, true);
+
+            if (!startDateStr || !endDateStr) {
+                return [];
+            }
+
+            const start = this.parseYMDToDate(startDateStr);
+            const end = this.parseYMDToDate(endDateStr);
+            const result = [];
+
+            const current = new Date(start);
+            while (current <= end) {
+                result.push(this.formatDateToYMD(current));
+                current.setDate(current.getDate() + 1);
+            }
+
+            return result;
+        };
+
+        // First: public holidays (lower priority)
+        for (const entry of calendarLeaves) {
+            if (entry.holiday_id) {
+                continue;
+            }
+
+            const coveredDates = enumerateOdooDateRange(entry.date_from, entry.date_to);
+            for (const date of coveredDates) {
+                if (!dateStateMap[date]) continue;
+
+                dateStateMap[date].isPublicHoliday = true;
+                dateStateMap[date].hoverLabel = entry.name || "Public Holiday";
+                dateStateMap[date].leaveIconClass = "fa-calendar";
+            }
+        }
+
+        // Second: own time offs (higher priority than public holiday)
+        for (const entry of calendarLeaves) {
+            if (!entry.holiday_id) {
+                continue;
+            }
+
+            const coveredDates = enumerateOdooDateRange(entry.date_from, entry.date_to);
+            const leaveTypeName = entry.time_off_type_display || "Time Off";
+
+            for (const date of coveredDates) {
+                if (!dateStateMap[date]) continue;
+
+                dateStateMap[date].hasLeave = true;
+                dateStateMap[date].leaveType = leaveTypeName;
+                dateStateMap[date].leaveColor = "#6c757d";
+                dateStateMap[date].leaveIconClass = "fa-user";
+                dateStateMap[date].hoverLabel = leaveTypeName;
+                dateStateMap[date].isPublicHoliday = false;
+            }
+        }
+
+        this.state.dayStrip = this.state.dayStrip.map((day) => {
+            const state = dateStateMap[day.date] || {};
+
+            return {
+                ...day,
+                totalMinutes: state.totalMinutes || 0,
+                totalDisplay: state.totalDisplay || "",
+                hasEntries: !!state.hasEntries,
+                hasLeave: !!state.hasLeave,
+                leaveType: state.leaveType || "",
+                leaveColor: state.leaveColor || "",
+                leaveIconClass: state.leaveIconClass || "",
+                isPublicHoliday: !!state.isPublicHoliday,
+                hoverLabel: state.hoverLabel || "",
                 isSelected: day.date === this.state.selectedDate,
                 isToday: day.date === this.state.todayDate,
             };
@@ -179,6 +325,10 @@ class TimeTrackingDashboard extends Component {
 
         if (day.isSelected) {
             classes += " o_selected";
+        } else if (day.hasLeave) {
+            classes += " o_has_leave";
+        } else if (day.isPublicHoliday) {
+            classes += " o_public_holiday";
         } else if (day.hasEntries) {
             classes += " o_has_entries";
         } else if (day.isToday) {

@@ -25,13 +25,21 @@
                                 <button
                                     type="button"
                                     t-att-class="getDayBoxClass(day)"
+                                    t-att-style="day.hasLeave &amp;&amp; !day.isSelected ? `background:${day.leaveColor};color:#fff;` : ''"
+                                    t-att-title="day.hoverLabel || ''"
                                     t-on-click="() => this.onSelectDay(day.date)"
                                 >
                                     <div class="o_alpha_tt_day_top">
                                         <span class="o_alpha_tt_day_number" t-esc="day.dayNumber"/>
                                         <span class="o_alpha_tt_day_weekday" t-esc="day.weekdayShort"/>
                                     </div>
-                                    <div class="o_alpha_tt_day_total" t-esc="day.totalDisplay"/>
+
+                                    <div class="o_alpha_tt_day_bottom">
+                                        <div class="o_alpha_tt_day_total" t-esc="day.totalDisplay"/>
+                                        <t t-if="day.leaveIconClass">
+                                            <i t-att-class="'fa ' + day.leaveIconClass + ' o_alpha_tt_day_icon'"/>
+                                        </t>
+                                    </div>
                                 </button>
                             </t>
                         </div>

@@ -201,4 +201,26 @@
         display: flex;
         justify-content: center;
     }
+    .o_alpha_tt_day_box.o_has_leave:not(.o_selected) {
+        color: #ffffff;
+    }
+
+    .o_alpha_tt_day_box.o_public_holiday:not(.o_selected) {
+        background: #8a8f98;
+        color: #ffffff;
+    }
+
+    .o_alpha_tt_day_bottom {
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 6px;
+    }
+
+    .o_alpha_tt_day_icon {
+        font-size: 16px;
+        flex-shrink: 0;
+        opacity: 0.95;
+    }
 }
